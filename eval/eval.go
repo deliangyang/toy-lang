@@ -12,10 +12,10 @@ func Eval(node ast.Node) object.Object {
 		return evalStatements(node.Statements)
 	case *ast.ExpressionStatement:
 		return Eval(node.Expression)
-	case *ast.LetStatement:
+	case *ast.IntegerLiteral:
 		return &object.Integer{Value: node.Value}
 	}
-	return &object.Null{}
+	return nil
 }
 
 func evalStatements(stmts []ast.Statement) object.Object {
@@ -35,6 +35,6 @@ func EvalIntegerExpression(ie *ast.IntegerLiteral) *object.Integer {
 }
 
 // EvalBooleanExpression evaluates a boolean expression
-func EvalBooleanExpression(be *ast.Boolean) *object.Boolean {
-	return &object.Boolean{Value: be.Value}
-}
+// func EvalBooleanExpression(be *ast.Boolean) *object.Boolean {
+// 	return &object.Boolean{Value: be.Value}
+// }
