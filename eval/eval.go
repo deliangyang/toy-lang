@@ -6,7 +6,7 @@ import (
 )
 
 // Eval evaluates the AST
-func Eval(node ast.Node, env object.Enviroment) object.Object {
+func Eval(node ast.Node, env *object.Enviroment) object.Object {
 	switch node := node.(type) {
 	case *ast.Program:
 		return evalStatements(node.Statements, env)
@@ -18,18 +18,20 @@ func Eval(node ast.Node, env object.Enviroment) object.Object {
 		return val
 	case *ast.Identifier:
 		return evalIdentifier(node, env)
+	case *ast.IntegerLiteral:
+		return &object.Integer{Value: node.Value}
 	}
-	return &object.Null{}
+	return nil
 }
 
-func evalIdentifier(node *ast.Identifier, env object.Enviroment) object.Object {
+func evalIdentifier(node *ast.Identifier, env *object.Enviroment) object.Object {
 	if val, ok := env.Get(node.Value); ok {
 		return val
 	}
 	return &object.Null{}
 }
 
-func evalStatements(stmts []ast.Statement, env object.Enviroment) object.Object {
+func evalStatements(stmts []ast.Statement, env *object.Enviroment) object.Object {
 
 	var result object.Object
 
@@ -46,6 +48,6 @@ func EvalIntegerExpression(ie *ast.IntegerLiteral) *object.Integer {
 }
 
 // EvalBooleanExpression evaluates a boolean expression
-func EvalBooleanExpression(be *ast.Boolean) *object.Boolean {
-	return &object.Boolean{Value: be.Value}
-}
+// func EvalBooleanExpression(be *ast.Boolean) *object.Boolean {
+// 	return &object.Boolean{Value: be.Value}
+// }
