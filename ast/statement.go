@@ -60,6 +60,9 @@ type Identifier struct {
 	Value string
 }
 
+func (i *Identifier) expressionNode()      {}
+func (i *Identifier) TokenLiteral() string { return i.Token.Literal }
+
 type IntegerLiteral struct {
 	Token token.Token
 	Value int64

@@ -6,24 +6,35 @@ import (
 )
 
 // Eval evaluates the AST
-func Eval(node ast.Node) object.Object {
+func Eval(node ast.Node, env object.Enviroment) object.Object {
 	switch node := node.(type) {
 	case *ast.Program:
-		return evalStatements(node.Statements)
+		return evalStatements(node.Statements, env)
 	case *ast.ExpressionStatement:
-		return Eval(node.Expression)
+		return Eval(node.Expression, env)
 	case *ast.LetStatement:
-		return &object.Integer{Value: node.Value}
+		val := Eval(node.Value, env)
+		env.Set(node.Name.Value, val)
+		return val
+	case *ast.Identifier:
+		return evalIdentifier(node, env)
 	}
 	return &object.Null{}
 }
 
-func evalStatements(stmts []ast.Statement) object.Object {
+func evalIdentifier(node *ast.Identifier, env object.Enviroment) object.Object {
+	if val, ok := env.Get(node.Value); ok {
+		return val
+	}
+	return &object.Null{}
+}
+
+func evalStatements(stmts []ast.Statement, env object.Enviroment) object.Object {
 
 	var result object.Object
 
 	for _, stmt := range stmts {
-		result = Eval(stmt)
+		result = Eval(stmt, env)
 	}
 
 	return result
