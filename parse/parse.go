@@ -168,3 +168,5 @@ func (p *Parser) parseExpression(precedence int) ast.Expression {
 	leftExp := prefix()
 	return leftExp
 }
+
+var precedences = map[token.Token]int{}
