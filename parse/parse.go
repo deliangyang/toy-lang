@@ -6,6 +6,24 @@ import (
 	"github.com/deliangyang/tiny-lang/token"
 )
 
+const (
+	_ int = iota
+	// LOWEST is the lowest precedence
+	LOWEST
+	// EQUALS is the equals precedence
+	EQUALS
+	// LESSGREATER is the less greater precedence
+	LESSGREATER
+	// SUM is the sum precedence
+	SUM
+	// PRODUCT is the product precedence
+	PRODUCT
+	// PREFIX is the prefix precedence
+	PREFIX
+	// CALL is the call precedence
+	CALL
+)
+
 // Parser is the struct for the parser
 type Parser struct {
 	l              *lexer.Lexer
@@ -20,6 +38,14 @@ type (
 	prefixParseFn func() ast.Statement
 	infixParseFn  func(ast.Expression) ast.Expression
 )
+
+func (p *Parser) registerPrefix(t token.Tok, fn prefixParseFn) {
+	p.prefixParseFns[t] = fn
+}
+
+func (p *Parser) registerInfix(t token.Tok, fn infixParseFn) {
+	p.infixParseeFns[t] = fn
+}
 
 // New creates a new parser
 func New(l *lexer.Lexer) *Parser {
@@ -133,6 +159,12 @@ func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
 }
 
 // parseExpression parses an expression
-func (p *Parser) parseExpression() ast.Expression {
-	return nil
+func (p *Parser) parseExpression(precedence int) ast.Expression {
+	prefix := p.prefixParseFns[p.curToken.Type]
+	if prefix == nil {
+		return nil
+	}
+
+	leftExp := prefix()
+	return leftExp
 }
