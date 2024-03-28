@@ -13,6 +13,10 @@ const (
 	PLUS                 // +
 	COMMA                // ,
 	SEMICOLON            // ;
+	LPAREN               // (
+	RPAREN               // )
+	LBRACE               // {
+	RBRACE               // }
 )
 
 type Token struct {
