@@ -17,6 +17,13 @@ const (
 	RPAREN               // )
 	LBRACE               // {
 	RBRACE               // }
+	EQ                   // ==
+	NOT_EQ               // !=
+	GT                   // >
+	LT                   // <
+	GTE                  // >=
+	LTE                  // <=
+	FUNCTION             // fn
 )
 
 type Token struct {
@@ -26,4 +33,17 @@ type Token struct {
 
 func NewToken(t Tok, ch []byte) Token {
 	return Token{Type: t, Literal: string(ch)}
+}
+
+var keywords = map[string]Tok{
+	"let":    LET,
+	"return": RETURN,
+	"fn":     FUNCTION,
+}
+
+func LookupIdent(ident string) Tok {
+	if tok, ok := keywords[ident]; ok {
+		return tok
+	}
+	return IDENT
 }
