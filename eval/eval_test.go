@@ -5,7 +5,7 @@ import (
 
 	"github.com/deliangyang/tiny-lang/lexer"
 	"github.com/deliangyang/tiny-lang/object"
-	"github.com/deliangyang/tiny-lang/parse"
+	"github.com/deliangyang/tiny-lang/parser"
 )
 
 func TestEvalIntegerExpression(t *testing.T) {
@@ -25,7 +25,7 @@ func TestEvalIntegerExpression(t *testing.T) {
 
 func testEval(input string) object.Object {
 	l := lexer.New(input)
-	p := parse.New(l)
+	p := parser.New(l)
 	program := p.ParseProgram()
 	env := object.NewEnviroment()
 	return Eval(program, env)
