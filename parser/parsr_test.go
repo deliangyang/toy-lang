@@ -12,6 +12,6 @@ func TestParse(t *testing.T) {
 	p := New(l)
 	prog := p.ParseProgram()
 	for _, v := range prog.Statements {
-		fmt.Println(v)
+		fmt.Println("---->", v.TokenLiteral())
 	}
 }

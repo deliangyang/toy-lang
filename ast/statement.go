@@ -73,6 +73,6 @@ type IntegerLiteral struct {
 	Value int64
 }
 
-func (ls *IntegerLiteral) statementNode() {}
+func (ls *IntegerLiteral) expressionNode() {}
 
 func (ls *IntegerLiteral) TokenLiteral() string { return ls.Token.Literal }
