@@ -24,6 +24,10 @@ const (
 	GTE                  // >=
 	LTE                  // <=
 	FUNCTION             // fn
+	BANG                 // !
+	MINUS                // -
+	ASTERISK             // *
+	SLASH                // /
 )
 
 type Token struct {
