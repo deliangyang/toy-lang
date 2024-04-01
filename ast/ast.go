@@ -12,7 +12,7 @@ type InfixExpression struct {
 func (ie *InfixExpression) expressionNode()      {}
 func (ie *InfixExpression) TokenLiteral() string { return ie.Token.Literal }
 func (ie *InfixExpression) String() string {
-	return "(" + "todo left" + " " + ie.Operator + " " + "todo right" + ")"
+	return "(" + ie.Left.String() + " " + ie.Operator + " " + ie.Right.String() + ")"
 }
 
 type PrefixExpression struct {
@@ -24,5 +24,5 @@ type PrefixExpression struct {
 func (pe *PrefixExpression) expressionNode()      {}
 func (pe *PrefixExpression) TokenLiteral() string { return pe.Token.Literal }
 func (pe *PrefixExpression) String() string {
-	return "(" + pe.Operator + " todo right " + ")"
+	return "(" + pe.Operator + pe.Right.String() + ")"
 }

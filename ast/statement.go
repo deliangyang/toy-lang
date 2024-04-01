@@ -1,6 +1,8 @@
 package ast
 
 import (
+	"bytes"
+
 	"github.com/deliangyang/tiny-lang/token"
 )
 
@@ -11,11 +13,13 @@ type Node interface {
 type Statement interface {
 	Node
 	statementNode()
+	String() string
 }
 
 type Expression interface {
 	Node
 	expressionNode()
+	String() string
 }
 
 type Program struct {
@@ -39,7 +43,18 @@ type LetStatement struct {
 func (ls *LetStatement) statementNode()       {}
 func (ls *LetStatement) TokenLiteral() string { return ls.Token.Literal }
 func (ls *LetStatement) String() string {
-	return ls.Token.Literal + " " + ls.Name.String() + " = "
+	var out bytes.Buffer
+
+	out.WriteString(ls.TokenLiteral() + " ")
+	out.WriteString(ls.Name.String())
+	out.WriteString(" = ")
+
+	if ls.Value != nil {
+		out.WriteString(ls.Value.String())
+	}
+
+	out.WriteString(";")
+	return out.String()
 
 }
 
@@ -50,6 +65,9 @@ type ReturnStatement struct {
 
 func (rs *ReturnStatement) statementNode()       {}
 func (rs *ReturnStatement) TokenLiteral() string { return rs.Token.Literal }
+func (rs *ReturnStatement) String() string {
+	return rs.Token.Literal + " " + rs.ReturnValue.String()
+}
 
 type ExpressionStatement struct {
 	Token      token.Token // the first token of the expression
@@ -58,6 +76,12 @@ type ExpressionStatement struct {
 
 func (es *ExpressionStatement) statementNode()       {}
 func (es *ExpressionStatement) TokenLiteral() string { return es.Token.Literal }
+func (es *ExpressionStatement) String() string {
+	if es.Expression != nil {
+		return es.Expression.String()
+	}
+	return ""
+}
 
 type Identifier struct {
 	Token token.Token // the token.IDENT token
@@ -76,3 +100,44 @@ type IntegerLiteral struct {
 func (ls *IntegerLiteral) expressionNode() {}
 
 func (ls *IntegerLiteral) TokenLiteral() string { return ls.Token.Literal }
+
+func (ls *IntegerLiteral) String() string { return ls.Token.Literal }
+
+type BlockStatement struct {
+	Token      token.Token // the { token
+	Statements []Statement
+}
+
+func (bs *BlockStatement) statementNode()       {}
+func (bs *BlockStatement) TokenLiteral() string { return bs.Token.Literal }
+func (bs *BlockStatement) String() string {
+	var out string
+	for _, s := range bs.Statements {
+		out += s.String()
+	}
+	return out
+}
+
+type IfExpression struct {
+	Token       token.Token // The 'if' token
+	Condition   Expression
+	Consequence *BlockStatement
+	Alternative *BlockStatement
+}
+
+func (ie *IfExpression) expressionNode()      {}
+func (ie *IfExpression) TokenLiteral() string { return ie.Token.Literal }
+func (ie *IfExpression) String() string {
+	out := bytes.Buffer{}
+	out.WriteString("if")
+	out.WriteString(ie.Condition.String())
+	out.WriteString(" { ")
+	out.WriteString(ie.Consequence.String())
+	out.WriteString(" }")
+	if ie.Alternative != nil {
+		out.WriteString(" else { ")
+		out.WriteString(ie.Alternative.String())
+		out.WriteString(" }")
+	}
+	return out.String()
+}

@@ -2,6 +2,40 @@ package token
 
 type Tok int
 
+var tokStrings = [...]string{
+	EOF:       "EOF",
+	ILLEGAL:   "ILLEGAL",
+	LET:       "LET",
+	RETURN:    "RETURN",
+	IDENT:     "IDENT",
+	INT:       "INT",
+	ASSIGN:    "=",
+	PLUS:      "+",
+	COMMA:     ",",
+	SEMICOLON: ";",
+	LPAREN:    "(",
+	RPAREN:    ")",
+	LBRACE:    "{",
+	RBRACE:    "}",
+	EQ:        "==",
+	NOT_EQ:    "!=",
+	GT:        ">",
+	LT:        "<",
+	GTE:       ">=",
+	LTE:       "<=",
+	FUNCTION:  "FN",
+	BANG:      "!",
+	MINUS:     "-",
+	ASTERISK:  "*",
+	SLASH:     "/",
+	IF:        "IF",
+	ELSE:      "ELSE",
+}
+
+func (t Tok) String() string {
+	return tokStrings[t]
+}
+
 const (
 	EOF       Tok = iota // end of file
 	ILLEGAL              // illegal character
@@ -28,6 +62,8 @@ const (
 	MINUS                // -
 	ASTERISK             // *
 	SLASH                // /
+	IF                   // if
+	ELSE                 // else
 )
 
 type Token struct {
@@ -43,6 +79,8 @@ var keywords = map[string]Tok{
 	"let":    LET,
 	"return": RETURN,
 	"fn":     FUNCTION,
+	"if":     IF,
+	"else":   ELSE,
 }
 
 func LookupIdent(ident string) Tok {
