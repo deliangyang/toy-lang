@@ -200,6 +200,36 @@ func (p *Parser) parseStatement() ast.Statement {
 	}
 }
 
+func (p *Parser) parseCallExpression() ast.Expression {
+	exp := &ast.CallExpression{Token: p.curToken}
+	exp.Function = p.parseExpression(LOWEST)
+	exp.Arguments = p.parseCallArguments()
+	return exp
+}
+
+func (p *Parser) parseCallArguments() []ast.Expression {
+	var args []ast.Expression
+	if p.peekTokenIs(token.RPAREN) {
+		p.nextToken()
+		return args
+	}
+	p.nextToken()
+
+	args = append(args, p.parseExpression(LOWEST))
+
+	for p.peekTokenIs(token.COMMA) {
+		p.nextToken()
+		p.nextToken()
+		args = append(args, p.parseExpression(LOWEST))
+	}
+
+	if !p.expectPeek(token.RPAREN) {
+		return nil
+	}
+
+	return args
+}
+
 // parseLetStatement parses a let statement
 func (p *Parser) parseLetStatement() *ast.LetStatement {
 	stmt := &ast.LetStatement{Token: p.curToken}
@@ -227,7 +257,7 @@ func (p *Parser) expectPeek(t token.Tok) bool {
 }
 
 // peekError appends an error to the parser's errors
-func (p *Parser) peekError(t token.Tok) {
+func (p *Parser) peekError(_ token.Tok) {
 	msg := "expected next token to be %s, got %s instead"
 	p.errors = append(p.errors, msg)
 }
@@ -273,9 +303,6 @@ func (p *Parser) parseExpression(precedence int) ast.Expression {
 
 	leftExp := prefix()
 
-	fmt.Println("parseExpression", p.peekToken.Type, p.curToken.Type, p.curToken.Literal, p.peekToken.Literal)
-	fmt.Println(precedence, p.curPrecedence(), !p.peekTokenIs(token.SEMICOLON) && precedence < p.curPrecedence())
-	fmt.Println("----------------------------")
 	for !p.peekTokenIs(token.SEMICOLON) && precedence < p.peekPrecedence() {
 		infix := p.infixParseeFns[p.peekToken.Type]
 		if infix == nil {
@@ -325,4 +352,5 @@ var precedences = map[token.Tok]int{
 	token.MINUS:    SUM,
 	token.SLASH:    PRODUCT,
 	token.ASTERISK: PRODUCT,
+	token.LPAREN:   CALL,
 }
